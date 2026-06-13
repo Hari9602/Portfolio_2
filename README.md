@@ -1,6 +1,6 @@
 # Harikrishnan VJ — Security Portfolio
 
-An award-grade, cinematic portfolio for a Penetration Tester & Purple Team operator.
+A portfolio for a Penetration Tester & Purple Team operator.
 Built to make recruiters and security leaders stop scrolling.
 
 > _"I break systems to prove how they hold."_
