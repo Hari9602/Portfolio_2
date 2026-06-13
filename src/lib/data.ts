@@ -220,46 +220,105 @@ export const projects: Project[] = [
   },
 ];
 
+export type CertItem = { name: string; date: string; url?: string };
 export type CertGroup = {
   issuer: string;
   accent: string;
-  items: { name: string; date: string }[];
+  items: CertItem[];
 };
 
+/* To make a certification clickable, paste its verification URL into `url`.
+   CompTIA / Fortinet verify via Credly (credly.com/badges/<id>);
+   Red Hat via rhtapps.redhat.com/verify; others via the issuer's link.
+   Leave url as "" to keep a cert non-clickable. */
 export const certifications: CertGroup[] = [
   {
     issuer: "CompTIA",
     accent: "cyan",
     items: [
-      { name: "Network Vulnerability Assessment Professional", date: "Sep 2025" },
-      { name: "Network Security Professional", date: "Sep 2025" },
-      { name: "PenTest+ CE", date: "Sep 2025" },
-      { name: "CSAP — Security Analytics Professional", date: "Aug 2025" },
-      { name: "CySA+ CE", date: "Aug 2025" },
-      { name: "Security+ CE", date: "Feb 2025" },
+      {
+        name: "Network Vulnerability Assessment Professional",
+        date: "Sep 2025",
+        url: "https://www.credly.com/badges/0e921077-1480-423b-9c6e-2cec863c5c12/public_url",
+      },
+      {
+        name: "Network Security Professional",
+        date: "Sep 2025",
+        url: "https://www.credly.com/badges/26261674-f087-4b77-9bea-4b37f416b55e/public_url",
+      },
+      {
+        name: "PenTest+ CE",
+        date: "Sep 2025",
+        url: "https://www.credly.com/badges/c27fbca0-be38-4edf-9c90-0b0b090d756d/public_url",
+      },
+      {
+        name: "CSAP — Security Analytics Professional",
+        date: "Aug 2025",
+        url: "https://www.credly.com/badges/5840e93a-4255-4057-a73f-f02db180551b/public_url",
+      },
+      {
+        name: "CySA+ CE",
+        date: "Aug 2025",
+        url: "https://www.credly.com/badges/67c294d0-9459-4e0e-862c-6e6365294904/public_url",
+      },
+      {
+        name: "Security+ CE",
+        date: "Feb 2025",
+        url: "https://www.credly.com/badges/23f4e83a-a8a6-4e59-801c-19b7467a0961/public_url",
+      },
     ],
   },
   {
     issuer: "Red Hat",
     accent: "magenta",
     items: [
-      { name: "System Administration II (RH134)", date: "Jul 2024" },
-      { name: "System Administration I (RH124)", date: "Jun 2024" },
+      {
+        name: "System Administration II (RH134)",
+        date: "Jul 2024",
+        url: "https://1yx6sr-my.sharepoint.com/personal/harikrishnan9602_1yx6sr_onmicrosoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FRHEL%2F%28RH134%2D9%2E0%29%20Certificate%2Epdf&parent=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FRHEL&ga=1",
+      },
+      {
+        name: "System Administration I (RH124)",
+        date: "Jun 2024",
+        url: "https://1yx6sr-my.sharepoint.com/personal/harikrishnan9602_1yx6sr_onmicrosoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FRHEL%2F%28RH124%2D9%2E0%29%20Certificate%2Epdf&parent=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FRHEL&ga=1",
+      },
     ],
   },
   {
     issuer: "Quick Heal",
     accent: "violet",
-    items: [{ name: "Certified Digital Forensic Investigator", date: "Jan 2025" }],
+    items: [
+      {
+        name: "Certified Digital Forensic Investigator",
+        date: "Jan 2025",
+        url: "https://lms.quickhealacademy.com/certificates/verification/exam?id=LPU-0000-189986",
+      },
+    ],
   },
   {
     issuer: "Fortinet & Foundations",
     accent: "aqua",
     items: [
-      { name: "Certified Network Security Engineer Foundation", date: "Nov 2020" },
-      { name: "Fortinet NSE-2", date: "Aug 2020" },
-      { name: "Fortinet NSE-1", date: "Aug 2020" },
-      { name: "Cybersecurity Fundamentals", date: "Jul 2024" },
+      {
+        name: "Certified Network Security Engineer Foundation",
+        date: "Nov 2020",
+        url: "https://1yx6sr-my.sharepoint.com/personal/harikrishnan9602_1yx6sr_onmicrosoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FSchool%20of%20Cyber%20Defense%2Fimg17%2Ejpg&parent=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FSchool%20of%20Cyber%20Defense&ga=1",
+      },
+      {
+        name: "Fortinet NSE-2",
+        date: "Aug 2020",
+        url: "https://1yx6sr-my.sharepoint.com/personal/harikrishnan9602_1yx6sr_onmicrosoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FFortinet%2FNSE%5F2%5FCertification%2Epdf&parent=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FFortinet&ga=1",
+      },
+      {
+        name: "Fortinet NSE-1",
+        date: "Aug 2020",
+        url: "https://1yx6sr-my.sharepoint.com/personal/harikrishnan9602_1yx6sr_onmicrosoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FFortinet%2FNSE%5F1%5FCertification%2Epdf&parent=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FFortinet&ga=1",
+      },
+      {
+        name: "Cybersecurity Fundamentals",
+        date: "Jul 2024",
+        url: "https://1yx6sr-my.sharepoint.com/personal/harikrishnan9602_1yx6sr_onmicrosoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FPaloalto%2FCybersecurity%20Fundamentals%20%5F%20Beacon%2Epdf&parent=%2Fpersonal%2Fharikrishnan9602%5F1yx6sr%5Fonmicrosoft%5Fcom%2FDocuments%2FCertificates%2FPaloalto&ga=1",
+      },
     ],
   },
 ];

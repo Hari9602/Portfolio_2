@@ -1,7 +1,8 @@
 "use client";
 
-import { Mail, Shield } from "lucide-react";
+import { Mail } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
+import Avatar from "@/components/ui/Avatar";
 import { profile, navItems } from "@/lib/data";
 
 export default function Footer() {
@@ -10,10 +11,8 @@ export default function Footer() {
       <div className="container-x py-16">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <span className="grid place-items-center h-8 w-8 rounded-lg bg-gradient-to-br from-[var(--cyan)] to-[var(--violet)] text-[#04060f]">
-                <Shield size={16} strokeWidth={2.5} />
-              </span>
+            <div className="flex items-center gap-3 mb-4">
+              <Avatar size={36} />
               <span className="font-display font-semibold text-lg">
                 {profile.name}
               </span>

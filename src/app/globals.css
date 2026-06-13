@@ -48,14 +48,23 @@ html {
   scroll-behavior: auto;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
 }
 
 body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans), system-ui, sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip;
+  width: 100%;
+  max-width: 100%;
   font-feature-settings: "ss01", "cv01", "cv02";
+}
+
+/* Decorative full-bleed layers must never create horizontal scroll */
+.aurora,
+.grid-bg {
+  max-width: 100vw;
 }
 
 /* Custom selection */
@@ -275,6 +284,109 @@ body {
 }
 .ops-log {
   animation: ops-scroll 14s linear infinite;
+}
+
+/* Holographic portrait */
+@keyframes portrait-scan-move {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(640%); }
+}
+.portrait-scan {
+  animation: portrait-scan-move 3.4s linear infinite;
+}
+.portrait-img {
+  filter: contrast(1.05) saturate(1.05);
+}
+.portrait-card:hover .portrait-img {
+  filter: contrast(1.08) saturate(1.12) brightness(1.03);
+}
+.portrait-border {
+  padding: 1.5px;
+  background: linear-gradient(140deg, var(--cyan), transparent 35%, transparent 65%, var(--violet));
+  background-size: 200% 200%;
+  animation: portrait-border-move 6s ease infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+@keyframes portrait-border-move {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Terminal caret */
+@keyframes term-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.term-caret {
+  animation: term-blink 1s steps(1) infinite;
+  margin-left: 1px;
+}
+
+/* Hologram projection base */
+@keyframes holo-base-pulse {
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) scaleX(1); }
+  50% { opacity: 0.85; transform: translateX(-50%) scaleX(1.12); }
+}
+.holo-base {
+  animation: holo-base-pulse 3.6s ease-in-out infinite;
+}
+
+/* Hologram overlays */
+.holo-interlace {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(52, 231, 255, 0.12) 0px,
+    rgba(52, 231, 255, 0.12) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  animation: holo-interlace-move 8s linear infinite;
+}
+@keyframes holo-interlace-move {
+  from { background-position-y: 0; }
+  to { background-position-y: 24px; }
+}
+
+@keyframes holo-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.88; }
+  94% { opacity: 1; }
+  96% { opacity: 0.94; }
+  97% { opacity: 1; }
+}
+.holo-flicker {
+  animation: holo-flicker 6s linear infinite;
+}
+
+/* Always-on holographic grade + chromatic split (stronger on hover) */
+.holo-img {
+  filter: contrast(1.12) saturate(1.18) brightness(1.06)
+    drop-shadow(1px 0 0 rgba(255, 46, 154, 0.3))
+    drop-shadow(-1px 0 0 rgba(52, 231, 255, 0.38));
+  animation: holo-chroma 5s ease-in-out infinite;
+}
+.portrait-card:hover .holo-img {
+  filter: contrast(1.16) saturate(1.3) brightness(1.08)
+    drop-shadow(2px 0 0 rgba(255, 46, 154, 0.45))
+    drop-shadow(-2px 0 0 rgba(52, 231, 255, 0.5));
+}
+@keyframes holo-chroma {
+  0%, 100% { filter: contrast(1.12) saturate(1.18) brightness(1.06) drop-shadow(1px 0 0 rgba(255,46,154,0.3)) drop-shadow(-1px 0 0 rgba(52,231,255,0.38)); }
+  50% { filter: contrast(1.14) saturate(1.22) brightness(1.07) drop-shadow(2px 0 0 rgba(255,46,154,0.35)) drop-shadow(-2px 0 0 rgba(52,231,255,0.45)); }
+}
+
+/* Hologram horizontal data bar */
+@keyframes holo-bar {
+  0% { transform: translateY(-20%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(2200%); opacity: 0; }
+}
+.holo-bar {
+  animation: holo-bar 5s ease-in-out infinite;
 }
 
 /* Glitch (logo / accents) */

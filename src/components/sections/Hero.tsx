@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Terminal, ChevronDown } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Magnetic from "@/components/ui/Magnetic";
 import CountUp from "@/components/ui/CountUp";
 import { profile, stats } from "@/lib/data";
@@ -63,10 +63,9 @@ export default function Hero() {
             transition={{ duration: 0.8, ease, delay: 0.3 }}
             className="inline-flex items-center gap-2.5 glass rounded-full px-4 py-2 mb-8"
           >
-            <Terminal size={14} className="text-[var(--cyan)]" />
-            <span className="font-mono text-xs text-[var(--muted)]">
-              <span className="text-[var(--aqua)]">$</span> whoami —{" "}
-              <span className="text-[var(--ink)]">{profile.role}</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--aqua)] live-dot" />
+            <span className="font-mono text-xs text-[var(--muted)] tracking-wide">
+              Available for security roles
             </span>
           </motion.div>
 
@@ -150,21 +149,6 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <motion.a
-        href="#about"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.6 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[var(--muted)]"
-      >
-        <span className="font-mono text-[10px] tracking-[0.3em] uppercase">Scroll</span>
-        <motion.span
-          animate={{ y: [0, 6, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8 }}
-        >
-          <ChevronDown size={16} />
-        </motion.span>
-      </motion.a>
     </section>
   );
 }

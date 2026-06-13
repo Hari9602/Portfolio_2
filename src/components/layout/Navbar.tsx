@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Shield } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import Avatar from "@/components/ui/Avatar";
 import { navItems, profile } from "@/lib/data";
 
 export default function Navbar() {
@@ -33,9 +34,7 @@ export default function Navbar() {
         >
           <nav className="flex items-center justify-between px-5 sm:px-6 py-3.5">
             <a href="#top" className="flex items-center gap-2.5 group" data-cursor>
-              <span className="grid place-items-center h-8 w-8 rounded-lg bg-gradient-to-br from-[var(--cyan)] to-[var(--violet)] text-[#04060f]">
-                <Shield size={16} strokeWidth={2.5} />
-              </span>
+              <Avatar size={34} />
               <span className="glitch font-display font-semibold tracking-tight text-[15px]">
                 {profile.shortName}
                 <span className="text-[var(--cyan)]">.</span>

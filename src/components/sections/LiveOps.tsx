@@ -81,9 +81,9 @@ export default function LiveOps() {
       <div className="container-x">
         <Reveal>
           <div className="glass border-gradient rounded-3xl overflow-hidden">
-            <div className="grid lg:grid-cols-[1fr_1.1fr_0.9fr] divide-y lg:divide-y-0 lg:divide-x divide-[var(--line)]">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr_0.9fr] divide-y lg:divide-y-0 lg:divide-x divide-[var(--line)]">
               {/* radar */}
-              <div className="p-7 sm:p-9">
+              <div className="p-5 sm:p-9">
                 <div className="flex items-center gap-2.5 mb-6">
                   <Radar size={15} className="text-[var(--cyan)]" />
                   <span className="eyebrow !text-[var(--muted)]">Surface Sweep</span>
@@ -95,7 +95,7 @@ export default function LiveOps() {
               </div>
 
               {/* live log */}
-              <div className="p-7 sm:p-9">
+              <div className="p-5 sm:p-9">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2.5">
                     <Activity size={15} className="text-[var(--aqua)]" />
@@ -106,11 +106,11 @@ export default function LiveOps() {
                   </span>
                 </div>
 
-                <div className="relative h-[200px] overflow-hidden font-mono text-[12.5px] [mask-image:linear-gradient(transparent,#000_18%,#000_82%,transparent)]">
+                <div className="relative h-[200px] overflow-hidden font-mono text-[11px] sm:text-[12.5px] [mask-image:linear-gradient(transparent,#000_18%,#000_82%,transparent)]">
                   <div ref={trackRef} className="ops-log space-y-2.5">
                     {[...LOG, ...LOG].map((l, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <span className="text-[var(--muted)]/60">
+                      <div key={i} className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <span className="text-[var(--muted)]/60 shrink-0">
                           {String((i % LOG.length) + 1).padStart(2, "0")}
                         </span>
                         <span
@@ -122,7 +122,7 @@ export default function LiveOps() {
                         >
                           {l.t}
                         </span>
-                        <span className="text-[var(--ink)]/75 truncate">{l.msg}</span>
+                        <span className="text-[var(--ink)]/75 truncate min-w-0 flex-1">{l.msg}</span>
                       </div>
                     ))}
                   </div>
@@ -130,7 +130,7 @@ export default function LiveOps() {
               </div>
 
               {/* status + metrics */}
-              <div className="p-7 sm:p-9 flex flex-col">
+              <div className="p-5 sm:p-9 flex flex-col">
                 <div className="flex items-center gap-2.5 mb-6">
                   <ShieldCheck size={15} className="text-[var(--violet)]" />
                   <span className="eyebrow !text-[var(--muted)]">Operator Status</span>

@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Crosshair, FileSearch, ShieldCheck } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import ProfilePortrait from "@/components/ui/ProfilePortrait";
+import AboutTerminal from "@/components/ui/AboutTerminal";
 import { about } from "@/lib/data";
 
 const icons = [Crosshair, FileSearch, ShieldCheck];
@@ -24,46 +26,36 @@ export default function About() {
           title="An adversary's instinct. A defender's discipline."
         />
 
-        <div className="mt-14 grid gap-12 lg:grid-cols-[1.3fr_1fr]">
-          <div>
-            <Reveal>
-              <p className="font-display text-2xl sm:text-3xl font-medium leading-snug text-[var(--ink)]">
-                {about.lead}
-              </p>
-            </Reveal>
-            <div className="mt-7 space-y-5">
-              {about.body.map((p, i) => (
-                <Reveal key={i} delay={0.1 + i * 0.1}>
-                  <p className="text-[var(--muted)] leading-relaxed text-[15px] sm:text-base">
-                    {p}
-                  </p>
-                </Reveal>
-              ))}
-            </div>
-          </div>
+        <div className="mt-14 grid gap-10 lg:gap-12 lg:grid-cols-[0.82fr_1.18fr] items-center">
+          {/* 3D animated hologram portrait */}
+          <ProfilePortrait />
 
-          <div className="space-y-4">
-            {about.principles.map((pr, i) => {
-              const Icon = icons[i];
-              return (
-                <Reveal key={pr.title} delay={i * 0.12}>
-                  <div className="glass glass-hover lift p-5 rounded-2xl flex gap-4">
-                    <span className="shrink-0 grid place-items-center h-11 w-11 rounded-xl bg-gradient-to-br from-[var(--cyan)]/20 to-[var(--violet)]/10 border border-[var(--line-strong)] text-[var(--cyan)]">
-                      <Icon size={19} />
-                    </span>
-                    <div>
-                      <h3 className="font-display font-semibold text-[15px]">
-                        {pr.title}
-                      </h3>
-                      <p className="mt-1 text-[13.5px] text-[var(--muted)] leading-relaxed">
-                        {pr.desc}
-                      </p>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
+          {/* animated about-me terminal */}
+          <Reveal delay={0.1}>
+            <AboutTerminal />
+          </Reveal>
+        </div>
+
+        {/* principles row */}
+        <div className="mt-12 grid gap-4 sm:grid-cols-3">
+          {about.principles.map((pr, i) => {
+            const Icon = icons[i];
+            return (
+              <Reveal key={pr.title} delay={i * 0.1}>
+                <div className="glass glass-hover lift p-5 rounded-2xl h-full">
+                  <span className="grid place-items-center h-11 w-11 rounded-xl bg-gradient-to-br from-[var(--cyan)]/20 to-[var(--violet)]/10 border border-[var(--line-strong)] text-[var(--cyan)]">
+                    <Icon size={19} />
+                  </span>
+                  <h3 className="mt-4 font-display font-semibold text-[15px]">
+                    {pr.title}
+                  </h3>
+                  <p className="mt-1.5 text-[13.5px] text-[var(--muted)] leading-relaxed">
+                    {pr.desc}
+                  </p>
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
 

@@ -1,10 +1,49 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BadgeCheck, Trophy } from "lucide-react";
+import { BadgeCheck, Trophy, ShieldCheck } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { Stagger, itemVariants, Reveal } from "@/components/ui/Reveal";
-import { certifications, achievements } from "@/lib/data";
+import { certifications, achievements, type CertItem } from "@/lib/data";
+
+function CertCard({ c, accent }: { c: CertItem; accent: string }) {
+  const verifiable = Boolean(c.url);
+  const Wrapper = verifiable ? motion.a : motion.div;
+  const wrapperProps = verifiable
+    ? { href: c.url, target: "_blank", rel: "noreferrer", "data-cursor": true }
+    : {};
+
+  return (
+    <Wrapper
+      {...wrapperProps}
+      variants={itemVariants}
+      style={{ ["--c" as string]: `var(--${accent})` }}
+      className={`group/cert relative flex items-start gap-2.5 rounded-xl bg-white/[0.02] border border-[var(--line)] p-3 transition-all ${
+        verifiable
+          ? "cursor-pointer hover:bg-white/[0.04] hover:border-[var(--c)] hover:shadow-[0_8px_30px_-12px_var(--c)]"
+          : ""
+      }`}
+    >
+      <span
+        className="mt-1 h-1.5 w-1.5 rounded-full shrink-0"
+        style={{ background: `var(--${accent})` }}
+      />
+      <div className="min-w-0 flex-1">
+        <p className="text-[13px] leading-snug text-[var(--ink)]/90 pr-5">{c.name}</p>
+        <p className="font-mono text-[10.5px] text-[var(--muted)] mt-0.5">{c.date}</p>
+      </div>
+      {verifiable && (
+        <span
+          className="absolute top-2.5 right-2.5 inline-flex items-center gap-1 text-[9px] font-mono uppercase tracking-wider opacity-0 group-hover/cert:opacity-100 transition-opacity"
+          style={{ color: `var(--${accent})` }}
+        >
+          <ShieldCheck size={11} />
+          Verify
+        </span>
+      )}
+    </Wrapper>
+  );
+}
 
 export default function Credentials() {
   return (
@@ -43,24 +82,7 @@ export default function Credentials() {
                     </div>
                     <Stagger className="grid sm:grid-cols-2 gap-2.5" gap={0.04}>
                       {group.items.map((c) => (
-                        <motion.div
-                          key={c.name}
-                          variants={itemVariants}
-                          className="flex items-start gap-2.5 rounded-xl bg-white/[0.02] border border-[var(--line)] p-3"
-                        >
-                          <span
-                            className="mt-1 h-1.5 w-1.5 rounded-full shrink-0"
-                            style={{ background: `var(--${group.accent})` }}
-                          />
-                          <div className="min-w-0">
-                            <p className="text-[13px] leading-snug text-[var(--ink)]/90">
-                              {c.name}
-                            </p>
-                            <p className="font-mono text-[10.5px] text-[var(--muted)] mt-0.5">
-                              {c.date}
-                            </p>
-                          </div>
-                        </motion.div>
+                        <CertCard key={c.name} c={c} accent={group.accent} />
                       ))}
                     </Stagger>
                   </div>
