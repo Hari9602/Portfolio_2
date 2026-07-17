@@ -2,6 +2,7 @@
 
 import { useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Float, MeshDistortMaterial, Icosahedron } from "@react-three/drei";
 import * as THREE from "three";
 
 /* A network sphere: nodes on a fibonacci sphere + proximity edges.
@@ -150,6 +151,46 @@ function Particles() {
   );
 }
 
+function DistortCore() {
+  const { pointer } = useThree();
+  const grp = useRef<THREE.Group>(null);
+  useFrame((_, delta) => {
+    if (!grp.current) return;
+    grp.current.rotation.y += delta * 0.15;
+    grp.current.rotation.x += (pointer.y * 0.3 - grp.current.rotation.x) * 0.03;
+  });
+  return (
+    <Float speed={1.4} rotationIntensity={0.5} floatIntensity={0.7}>
+      <group ref={grp}>
+        {/* glowing distorted glass core */}
+        <Icosahedron args={[1.05, 6]}>
+          <MeshDistortMaterial
+            color="#4d7cff"
+            emissive="#1b2f7a"
+            emissiveIntensity={0.5}
+            roughness={0.15}
+            metalness={0.9}
+            distort={0.42}
+            speed={1.6}
+            transparent
+            opacity={0.92}
+          />
+        </Icosahedron>
+        {/* wireframe shell */}
+        <Icosahedron args={[1.35, 2]}>
+          <meshBasicMaterial
+            color="#34e7ff"
+            wireframe
+            transparent
+            opacity={0.14}
+            blending={THREE.AdditiveBlending}
+          />
+        </Icosahedron>
+      </group>
+    </Float>
+  );
+}
+
 export default function HeroScene() {
   return (
     <Canvas
@@ -158,7 +199,13 @@ export default function HeroScene() {
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       style={{ background: "transparent" }}
     >
-      <NetworkSphere />
+      <ambientLight intensity={0.6} />
+      <pointLight position={[4, 3, 5]} intensity={40} color="#34e7ff" />
+      <pointLight position={[-5, -2, 2]} intensity={30} color="#8b5cf6" />
+      <Float speed={0.8} rotationIntensity={0.2} floatIntensity={0.4}>
+        <NetworkSphere />
+      </Float>
+      <DistortCore />
       <Particles />
     </Canvas>
   );

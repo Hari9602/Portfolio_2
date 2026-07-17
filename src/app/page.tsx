@@ -1,4 +1,5 @@
 import SmoothScroll from "@/components/providers/SmoothScroll";
+import ShaderBackgroundMount from "@/components/three/ShaderBackgroundMount";
 import Cursor from "@/components/layout/Cursor";
 import ScrollProgress from "@/components/layout/ScrollProgress";
 import Preloader from "@/components/layout/Preloader";
@@ -22,6 +23,7 @@ export default function Home() {
   return (
     <SmoothScroll>
       <Preloader />
+      <ShaderBackgroundMount />
       <div className="grain" />
       <div className="noise-vignette" />
       <Cursor />

@@ -49,10 +49,11 @@ html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
+  background: var(--bg); /* fallback behind the WebGL shader */
 }
 
 body {
-  background: var(--bg);
+  background: transparent; /* WebGL shader background shows through */
   color: var(--ink);
   font-family: var(--font-sans), system-ui, sans-serif;
   overflow-x: clip;
