@@ -6,6 +6,7 @@ import * as THREE from "three";
 import Embers from "./cine/Embers";
 import NeonRibbon from "./cine/NeonRibbon";
 import { useCanvasActive } from "./cine/useCanvasActive";
+import { ambientPointer, hasFinePointer } from "@/lib/ambientPointer";
 
 /* Cinematic hero stage: a volumetric red spotlight falling on the operator,
    rising embers, and two light-trail ribbons sweeping behind the figure.
@@ -84,7 +85,7 @@ function Rig({ children }: { children: React.ReactNode }) {
   const g = useRef<THREE.Group>(null);
   useFrame((state) => {
     if (!g.current) return;
-    const { x, y } = state.pointer;
+    const { x, y } = hasFinePointer() ? state.pointer : ambientPointer(state.clock.elapsedTime);
     g.current.rotation.y += (x * 0.18 - g.current.rotation.y) * 0.04;
     g.current.rotation.x += (-y * 0.08 - g.current.rotation.x) * 0.04;
   });

@@ -7,6 +7,12 @@ import * as THREE from "three";
 import Embers from "./cine/Embers";
 import NeonRibbon from "./cine/NeonRibbon";
 import { useCanvasActive } from "./cine/useCanvasActive";
+import { ambientPointer, hasFinePointer } from "@/lib/ambientPointer";
+
+/* mouse on desktop; tilt + ambient drift on touch */
+function scenePointer(state: { pointer: THREE.Vector2; clock: THREE.Clock }) {
+  return hasFinePointer() ? state.pointer : ambientPointer(state.clock.elapsedTime);
+}
 
 /* "The arsenal" — the operator as a back-lit silhouette, ringed by orbiting
    dark-glass tool cubes and light trails. Tool names come from the page. */
@@ -198,6 +204,12 @@ function ToolCube({ spec, font }: { spec: CubeSpec; font: string }) {
             hovered.current = false;
             document.body.style.cursor = "";
           }}
+          // touch: a tap pops the cube for a beat, same feedback as hover
+          onPointerDown={(e) => {
+            if (e.pointerType === "mouse") return;
+            hovered.current = true;
+            window.setTimeout(() => (hovered.current = false), 1400);
+          }}
         >
           <RoundedBox args={[spec.size, spec.size, spec.size]} radius={0.07} smoothness={4}>
             <meshPhysicalMaterial
@@ -244,7 +256,7 @@ function Orbit({ tools }: { tools: string[] }) {
   useFrame((state, d) => {
     if (!ring.current) return;
     ring.current.rotation.y += d * 0.12;
-    ring.current.rotation.x += (state.pointer.y * 0.12 + 0.08 - ring.current.rotation.x) * 0.03;
+    ring.current.rotation.x += (scenePointer(state).y * 0.12 + 0.08 - ring.current.rotation.x) * 0.03;
   });
 
   return (
@@ -261,8 +273,9 @@ function CameraRig() {
   useFrame((state) => {
     const { camera } = state;
     const z = narrow ? 12.5 : 9.2;
-    camera.position.x += (state.pointer.x * 1.1 - camera.position.x) * 0.04;
-    camera.position.y += (0.4 + state.pointer.y * 0.5 - camera.position.y) * 0.04;
+    const p = scenePointer(state);
+    camera.position.x += (p.x * 1.1 - camera.position.x) * 0.04;
+    camera.position.y += (0.4 + p.y * 0.5 - camera.position.y) * 0.04;
     camera.position.z += (z - camera.position.z) * 0.08;
     camera.lookAt(0, 0, 0);
   });

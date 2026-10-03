@@ -14,6 +14,7 @@ import { ArrowUpRight } from "lucide-react";
 import Magnetic from "@/components/ui/Magnetic";
 import CountUp from "@/components/ui/CountUp";
 import { profile, stats } from "@/lib/data";
+import { ambientPointer, hasFinePointer } from "@/lib/ambientPointer";
 
 const HeroScene = dynamic(() => import("@/components/three/HeroScene"), { ssr: false });
 
@@ -158,6 +159,19 @@ export default function Hero() {
   const nameShiftY = useTransform(sy, (v) => v * 10);
 
   useEffect(() => {
+    // touch devices: same layered parallax, driven by tilt + ambient drift
+    if (!hasFinePointer()) {
+      let raf = 0;
+      const t0 = performance.now();
+      const loop = () => {
+        const p = ambientPointer((performance.now() - t0) / 1000);
+        mx.set(p.x * 0.5);
+        my.set(p.y * 0.5);
+        raf = requestAnimationFrame(loop);
+      };
+      raf = requestAnimationFrame(loop);
+      return () => cancelAnimationFrame(raf);
+    }
     const onMove = (e: PointerEvent) => {
       mx.set(e.clientX / window.innerWidth - 0.5);
       my.set(e.clientY / window.innerHeight - 0.5);

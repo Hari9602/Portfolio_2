@@ -26,10 +26,10 @@ function Panel({ item, idx }: { item: (typeof expertise)[number]; idx: number })
   return (
     <article
       data-cursor
-      className="xp-card group relative shrink-0 w-full lg:w-[min(36vw,520px)] lg:h-[min(70vh,640px)] overflow-hidden rounded-md border border-[var(--line-strong)] bg-[#0b0606] preserve-3d"
+      className="xp-card group relative shrink-0 w-[80vw] sm:w-[min(56vw,460px)] lg:w-[min(36vw,520px)] h-[min(74svh,640px)] lg:h-[min(70vh,640px)] overflow-hidden rounded-md border border-[var(--line-strong)] bg-[#0b0606] preserve-3d"
     >
       {/* key art */}
-      <div className="absolute inset-0 transition-transform duration-[1.2s] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-110" style={{ background: ART[idx % ART.length] }} />
+      <div className="absolute inset-0 transition-transform duration-[1.2s] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-110 group-[.is-active]:scale-110" style={{ background: ART[idx % ART.length] }} />
       <div className="absolute inset-0 grid-bg" />
       <div className="absolute right-[-14%] top-[-10%] h-[66%] aspect-square rounded-full border border-[var(--red)]/40 spin-slow">
         <span className="absolute left-1/2 -top-1 h-2 w-2 -translate-x-1/2 rounded-full bg-[var(--red)] shadow-[0_0_12px_var(--red)]" />
@@ -38,24 +38,24 @@ function Panel({ item, idx }: { item: (typeof expertise)[number]; idx: number })
       <div className="absolute right-[10%] top-[13%] h-[24%] aspect-square grid place-items-center">
         <Glyph
           strokeWidth={1}
-          className="h-full w-full text-[var(--red)] drop-shadow-[0_0_18px_rgba(255,45,45,0.85)] transition-transform duration-700 group-hover:scale-110 group-hover:rotate-6"
+          className="h-full w-full text-[var(--red)] drop-shadow-[0_0_18px_rgba(255,45,45,0.85)] transition-transform duration-700 group-hover:scale-110 group-[.is-active]:scale-110 group-hover:rotate-6 group-[.is-active]:rotate-6"
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
-      <span className="absolute -left-2 top-4 font-poster stroke-text text-[9rem] leading-none opacity-70">
+      <span className="absolute -left-2 top-4 font-poster stroke-text text-[6.5rem] sm:text-[9rem] leading-none opacity-70">
         {String(idx + 1).padStart(2, "0")}
       </span>
 
-      <div className="relative h-full flex flex-col justify-end p-7 sm:p-9 pt-40">
+      <div className="relative h-full flex flex-col justify-end p-5 sm:p-9">
         <div className="flex items-center justify-between font-mono text-[10.5px] uppercase tracking-[0.3em] text-[var(--muted)]">
           <span>
             <span className="text-[var(--red)]">{String(idx + 1).padStart(2, "0")}</span> / {String(expertise.length).padStart(2, "0")}
           </span>
-          <ArrowUpRight size={18} className="text-[var(--red)] transition-transform duration-500 group-hover:rotate-45" />
+          <ArrowUpRight size={18} className="text-[var(--red)] transition-transform duration-500 group-hover:rotate-45 group-[.is-active]:rotate-45" />
         </div>
-        <h3 className="mt-4 font-serif text-[2rem] sm:text-[2.4rem] leading-[1.02] text-[var(--ink)]">{item.title}</h3>
-        <p className="mt-4 text-[14px] text-[var(--muted)] leading-relaxed">{item.blurb}</p>
-        <div className="mt-6 flex flex-wrap gap-2">
+        <h3 className="mt-3 sm:mt-4 font-serif text-[1.75rem] sm:text-[2.4rem] leading-[1.02] text-[var(--ink)]">{item.title}</h3>
+        <p className="mt-3 sm:mt-4 text-[13px] sm:text-[14px] text-[var(--muted)] leading-relaxed">{item.blurb}</p>
+        <div className="mt-4 sm:mt-6 flex flex-wrap gap-1.5 sm:gap-2">
           {item.capabilities.map((c) => (
             <span
               key={c}
@@ -65,7 +65,7 @@ function Panel({ item, idx }: { item: (typeof expertise)[number]; idx: number })
             </span>
           ))}
         </div>
-        <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-gradient-to-r from-[var(--red)] to-[var(--ember)] transition-transform duration-700 group-hover:scale-x-100" />
+        <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-gradient-to-r from-[var(--red)] to-[var(--ember)] transition-transform duration-700 group-hover:scale-x-100 group-[.is-active]:scale-x-100" />
       </div>
     </article>
   );
@@ -77,8 +77,11 @@ export default function Expertise() {
   const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // phone address-bar show/hide must not re-measure the pin mid-swipe
+    ScrollTrigger.config({ ignoreMobileResize: true });
     const mm = gsap.matchMedia();
-    mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+    // same pinned cover-flow on every screen size; reduced-motion gets a swipe row
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
       const pin = pinRef.current;
       const track = trackRef.current;
       if (!pin || !track) return;
@@ -119,6 +122,15 @@ export default function Expertise() {
             { rotateY: 0, scale: 1, opacity: 1, ease: "none" }
           )
           .to(card, { rotateY: 32, scale: 0.86, opacity: 0.45, ease: "none" });
+
+        // centred panel lights up exactly like hover — works hands-free on touch
+        ScrollTrigger.create({
+          trigger: card,
+          containerAnimation: tween,
+          start: "center 65%",
+          end: "center 35%",
+          toggleClass: "is-active",
+        });
       });
     });
     return () => mm.revert();
@@ -135,10 +147,13 @@ export default function Expertise() {
         />
       </div>
 
-      <div ref={pinRef} className="relative lg:h-screen lg:flex lg:items-center overflow-hidden mt-14 lg:mt-0 pb-[clamp(5rem,10vw,8rem)] lg:pb-0">
+      <div
+        ref={pinRef}
+        className="relative h-[100svh] lg:h-screen flex items-center overflow-hidden motion-reduce:overflow-x-auto motion-reduce:snap-x motion-reduce:snap-mandatory"
+      >
         <div
           ref={trackRef}
-          className="stage-3d flex flex-col lg:flex-row gap-6 lg:gap-10 px-[clamp(1rem,5vw,3rem)] lg:pl-[10vw] lg:pr-[30vw] will-change-transform"
+          className="stage-3d flex flex-row gap-5 lg:gap-10 pl-[10vw] pr-[20vw] lg:pr-[30vw] will-change-transform motion-reduce:[&>*]:snap-center"
         >
           {expertise.map((item, idx) => (
             <Panel key={item.id} item={item} idx={idx} />
@@ -146,7 +161,7 @@ export default function Expertise() {
         </div>
 
         {/* scrub progress */}
-        <div className="hidden lg:block absolute bottom-10 left-[10vw] right-[10vw]">
+        <div className="absolute bottom-6 lg:bottom-10 left-[10vw] right-[10vw] motion-reduce:hidden">
           <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-[var(--muted)] mb-3">
             <span>Capabilities</span>
             <span className="text-[var(--red)]">{String(expertise.length).padStart(2, "0")}</span>

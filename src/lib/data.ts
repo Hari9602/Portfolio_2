@@ -57,40 +57,53 @@ export const about = {
   ],
 };
 
+/* Roles carry ISO dates only — the period label and tenure ("6 mos")
+   are derived at view time, so a current role's duration advances every
+   month on its own. Omit `end` for a role that is still ongoing. */
+export type Role = {
+  title: string;
+  type?: string;
+  start: string; // YYYY-MM-DD
+  end?: string; // YYYY-MM-DD, omitted = Present
+  summary?: string;
+  highlights?: string[];
+  stack?: string[];
+};
+
 export type Experience = {
-  role: string;
   company: string;
-  type: string;
-  period: string;
-  duration: string;
   location: string;
   mode: string;
-  current: boolean;
-  summary: string;
-  highlights: string[];
-  stack: string[];
   accent: string;
+  roles: Role[]; // newest first
 };
 
 export const experience: Experience[] = [
   {
-    role: "VAPT Intern",
     company: "Bima Sugam India Federation",
-    type: "Internship",
-    period: "Apr 2026 — Present",
-    duration: "3 mos",
     location: "Mumbai, Maharashtra, India",
     mode: "On-site",
-    current: true,
-    summary:
-      "Hands-on vulnerability assessment and penetration testing across the digital insurance infrastructure of India's national insurance-platform federation.",
-    highlights: [
-      "Run end-to-end VAPT engagements against web applications and network services, mapping attack surface and validating real exploitability.",
-      "Test against the OWASP Top 10 and document findings with reproducible proof-of-concept and risk-rated severity.",
-      "Translate findings into clear, prioritized remediation guidance for engineering teams — closing the loop from offense to defense.",
-    ],
-    stack: ["VAPT", "Web App Security", "Network Security", "OWASP", "Reporting"],
     accent: "cyan",
+    roles: [
+      {
+        title: "DevSecOps Engineer",
+        start: "2026-10-01",
+      },
+      {
+        title: "VAPT Intern",
+        type: "Internship",
+        start: "2026-04-01",
+        end: "2026-09-30",
+        summary:
+          "Hands-on vulnerability assessment and penetration testing across the digital insurance infrastructure of India's national insurance-platform federation.",
+        highlights: [
+          "Run end-to-end VAPT engagements against web applications and network services, mapping attack surface and validating real exploitability.",
+          "Test against the OWASP Top 10 and document findings with reproducible proof-of-concept and risk-rated severity.",
+          "Translate findings into clear, prioritized remediation guidance for engineering teams — closing the loop from offense to defense.",
+        ],
+        stack: ["VAPT", "Web App Security", "Network Security", "OWASP", "Reporting"],
+      },
+    ],
   },
 ];
 

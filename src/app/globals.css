@@ -601,3 +601,13 @@ body {
   .aurora, .marquee-track, .marquee-track-slow, .live-dot, .shimmer, .grain,
   .light-leak::before, .light-leak::after { animation: none !important; }
 }
+
+/* timeline arc: on phones odd year labels drop below the curve */
+.arc-drop {
+  transform: translateY(86px);
+}
+@media (min-width: 768px) {
+  .arc-drop {
+    transform: none;
+  }
+}

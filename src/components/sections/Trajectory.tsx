@@ -9,7 +9,6 @@ import {
   type MotionValue,
 } from "framer-motion";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { Reveal } from "@/components/ui/Reveal";
 import { timeline } from "@/lib/data";
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -78,8 +77,9 @@ function Arc({ progress }: { progress: MotionValue<number> }) {
             x={n.x}
             y={n.y - 26}
             textAnchor="middle"
-            className="font-poster"
-            style={{ fontSize: 30, fill: i <= lit ? "#f3ebe4" : "rgba(243,235,228,0.3)", transition: "fill .5s", letterSpacing: "0.02em" }}
+            // phones: larger labels, odd ones drop below the arc so they never collide
+            className={`font-poster text-[46px] md:text-[30px] ${i % 2 ? "arc-drop" : ""}`}
+            style={{ fill: i <= lit ? "#f3ebe4" : "rgba(243,235,228,0.3)", transition: "fill .5s", letterSpacing: "0.02em" }}
           >
             {STEPS[i]?.period}
           </text>
@@ -106,10 +106,10 @@ export default function Trajectory() {
         />
 
         <div ref={ref} className="relative mt-16">
-          {/* desktop: arc + fanned cards */}
-          <div className="hidden md:block">
+          {/* arc + fanned cards (phones: same cards in a swipe-snap row) */}
+          <div>
             <Arc progress={scrollYProgress} />
-            <div className="stage-3d -mt-4 grid grid-cols-4 gap-5">
+            <div className="stage-3d mt-10 md:-mt-4 flex md:grid md:grid-cols-4 gap-4 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-[clamp(1rem,5vw,3rem)] px-[clamp(1rem,5vw,3rem)] md:mx-0 md:px-0 py-6 md:py-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {STEPS.map((t, i) => (
                 <motion.article
                   key={t.title}
@@ -119,7 +119,7 @@ export default function Trajectory() {
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 1, ease, delay: i * 0.12 }}
                   data-cursor
-                  className="relative rounded-md border border-[var(--line-strong)] bg-gradient-to-b from-[#170a09] to-black/90 p-6 shadow-[0_30px_60px_-30px_rgba(255,45,45,0.5)] preserve-3d"
+                  className="relative shrink-0 w-[78vw] max-w-[340px] md:w-auto md:max-w-none snap-center rounded-md border border-[var(--line-strong)] bg-gradient-to-b from-[#170a09] to-black/90 p-6 shadow-[0_30px_60px_-30px_rgba(255,45,45,0.5)] preserve-3d"
                 >
                   <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--red)] to-transparent" />
                   <span className="font-mono text-[10.5px] tracking-[0.24em] text-[var(--red)]">{t.period}</span>
@@ -127,28 +127,6 @@ export default function Trajectory() {
                   <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--muted)]">{t.org}</p>
                   <p className="mt-4 text-[13.5px] text-[var(--ink)]/75 leading-relaxed">{t.desc}</p>
                 </motion.article>
-              ))}
-            </div>
-          </div>
-
-          {/* mobile: glowing rail */}
-          <div className="md:hidden relative pl-8">
-            <div className="absolute left-[5px] top-2 bottom-2 w-px bg-[var(--line-strong)]" />
-            <motion.div
-              style={{ scaleY: scrollYProgress }}
-              className="absolute left-[5px] top-2 bottom-2 w-px origin-top bg-gradient-to-b from-[var(--red)] via-[var(--ember)] to-[var(--amber)] shadow-[0_0_10px_var(--red)]"
-            />
-            <div className="space-y-8">
-              {STEPS.map((t, i) => (
-                <Reveal key={t.title} delay={i * 0.05}>
-                  <div className="relative">
-                    <span className="absolute -left-8 top-1 h-3 w-3 rounded-full bg-[var(--red)] shadow-[0_0_14px_var(--red)]" />
-                    <span className="font-poster text-3xl leading-none text-[var(--ink)]">{t.period}</span>
-                    <h3 className="mt-2 font-serif text-2xl leading-tight">{t.title}</h3>
-                    <p className="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--muted)]">{t.org}</p>
-                    <p className="mt-3 text-[14px] text-[var(--ink)]/75 leading-relaxed">{t.desc}</p>
-                  </div>
-                </Reveal>
               ))}
             </div>
           </div>

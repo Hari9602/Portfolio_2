@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { BadgeCheck, Trophy, ArrowUpRight } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { certifications, achievements, type CertItem } from "@/lib/data";
+import { hasFinePointer } from "@/lib/ambientPointer";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -97,6 +98,23 @@ function Reticle({ focus }: { focus: number }) {
 
 export default function Credentials() {
   const [focus, setFocus] = useState(-1);
+  const recordRef = useRef<HTMLDivElement>(null);
+
+  // touch has no hover: sweep the lock-on through each rank while in view
+  useEffect(() => {
+    const el = recordRef.current;
+    if (!el || hasFinePointer()) return;
+    let id = 0;
+    const io = new IntersectionObserver(([e]) => {
+      window.clearInterval(id);
+      if (e.isIntersecting) id = window.setInterval(() => setFocus((f) => (f + 1) % achievements.length), 1800);
+    });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      window.clearInterval(id);
+    };
+  }, []);
 
   return (
     <section id="credentials" className="section">
@@ -137,7 +155,7 @@ export default function Credentials() {
           </div>
 
           {/* Achievements */}
-          <div className="lg:sticky lg:top-24 self-start">
+          <div ref={recordRef} className="lg:sticky lg:top-24 self-start">
             <div className="flex items-center gap-2.5 mb-8">
               <Trophy size={18} className="text-[var(--red)]" />
               <h3 className="font-serif text-2xl">Competitive Record</h3>
@@ -156,10 +174,15 @@ export default function Credentials() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.7, ease, delay: i * 0.07 }}
                   onMouseEnter={() => setFocus(i)}
+                  onClick={() => setFocus(i)}
                   data-cursor
                   className="group flex items-center gap-5 py-4 border-b border-[var(--line)]"
                 >
-                  <span className="font-poster text-[1.9rem] leading-none w-24 shrink-0 text-[var(--red)] group-hover:text-[var(--amber)] transition-colors">
+                  <span
+                    className={`font-poster text-[1.9rem] leading-none w-24 shrink-0 group-hover:text-[var(--amber)] transition-colors ${
+                      focus === i ? "text-[var(--amber)]" : "text-[var(--red)]"
+                    }`}
+                  >
                     {a.rank}
                   </span>
                   <div className="min-w-0">

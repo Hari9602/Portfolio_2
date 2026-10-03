@@ -17,7 +17,7 @@ import {
   Briefcase,
 } from "lucide-react";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/BrandIcons";
-import { profile } from "@/lib/data";
+import { profile, experience } from "@/lib/data";
 
 type Item = {
   label: string;
@@ -45,7 +45,7 @@ export default function CommandPalette() {
   const items: Item[] = useMemo(
     () => [
       { label: "About", hint: "The operator", icon: User, action: go("#about"), keywords: "bio profile" },
-      { label: "Experience", hint: "VAPT Intern", icon: Briefcase, action: go("#experience"), keywords: "work job internship bima sugam" },
+      { label: "Experience", hint: experience[0].roles[0].title, icon: Briefcase, action: go("#experience"), keywords: "work job internship devsecops vapt bima sugam" },
       { label: "Expertise", hint: "Capabilities", icon: Crosshair, action: go("#expertise"), keywords: "skills vapt" },
       { label: "Case Studies", hint: "Field work", icon: FolderGit2, action: go("#projects"), keywords: "projects work" },
       { label: "Skills", hint: "Proficiency", icon: FileSearch, action: go("#skills") },
