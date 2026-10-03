@@ -11,11 +11,14 @@ const variants: Variants = {
     rotateX: 0,
     filter: "blur(0px)",
     transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] },
+    // drop the filter once settled so the layer re-rasterizes crisp
+    transitionEnd: { filter: "none" },
   },
 };
 
-// 3D perspective wrapper so children flip up from depth on reveal
-const perspStyle = { transformPerspective: 1000, transformStyle: "preserve-3d" as const };
+// perspective so children flip up from depth on reveal (no preserve-3d:
+// nesting it under tilt cards makes Chrome rasterize text soft)
+const perspStyle = { transformPerspective: 1000 };
 
 export function Reveal({
   children,

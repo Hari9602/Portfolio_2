@@ -6,9 +6,9 @@ import { profile } from "@/lib/data";
 export default function ConsoleSignature() {
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const big = "color:#34e7ff;font-size:22px;font-weight:700;font-family:monospace";
+    const big = "color:#ff2d2d;font-size:22px;font-weight:700;font-family:monospace";
     const dim = "color:#8b95ad;font-size:12px;font-family:monospace";
-    const ok = "color:#2ff5c8;font-size:12px;font-family:monospace";
+    const ok = "color:#ffb648;font-size:12px;font-family:monospace";
 
     // eslint-disable-next-line no-console
     console.log("%c⬡ PHANTOM // ACCESS GRANTED", big);

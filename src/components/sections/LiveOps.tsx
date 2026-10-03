@@ -39,7 +39,8 @@ function useClock() {
 function RadarSweep() {
   return (
     <div className="relative aspect-square w-full max-w-[260px] mx-auto">
-      <div className="absolute inset-0 rounded-full border border-[var(--line-strong)]" />
+      <div className="absolute -inset-3 rounded-full border border-dashed border-[var(--red)]/25 spin-slow" />
+      <div className="absolute inset-0 rounded-full border border-[var(--red)]/40 shadow-[0_0_40px_-10px_rgba(255,45,45,0.6)_inset]" />
       <div className="absolute inset-[18%] rounded-full border border-[var(--line)]" />
       <div className="absolute inset-[38%] rounded-full border border-[var(--line)]" />
       <div className="absolute inset-[58%] rounded-full border border-[var(--line)]" />
@@ -51,7 +52,7 @@ function RadarSweep() {
         className="absolute inset-0 rounded-full radar-sweep"
         style={{
           background:
-            "conic-gradient(from 0deg, transparent 0deg, transparent 300deg, rgba(52,231,255,0.05) 330deg, rgba(52,231,255,0.35) 360deg)",
+            "conic-gradient(from 0deg, transparent 0deg, transparent 300deg, rgba(255,45,45,0.06) 330deg, rgba(255,45,45,0.45) 360deg)",
         }}
       />
       {/* blips */}
@@ -80,7 +81,8 @@ export default function LiveOps() {
     <section id="ops" className="section !py-20">
       <div className="container-x">
         <Reveal>
-          <div className="glass border-gradient rounded-3xl overflow-hidden">
+          <div className="relative glass hud-corners border-gradient rounded-md overflow-hidden bg-black/40">
+            <div className="scan-sweep" />
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr_0.9fr] divide-y lg:divide-y-0 lg:divide-x divide-[var(--line)]">
               {/* radar */}
               <div className="p-5 sm:p-9">

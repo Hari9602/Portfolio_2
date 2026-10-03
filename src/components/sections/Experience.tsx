@@ -1,10 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Briefcase, MapPin, CheckCircle2, ArrowUpRight } from "lucide-react";
+import { MapPin } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import Tilt from "@/components/ui/Tilt";
 import { experience } from "@/lib/data";
+
+const ease = [0.16, 1, 0.3, 1] as const;
 
 export default function Experience() {
   return (
@@ -17,112 +20,108 @@ export default function Experience() {
           subtitle="Where the methodology meets a live environment — applying offensive testing against real production infrastructure."
         />
 
-        <div className="mt-14 space-y-5">
+        <div className="mt-16 space-y-8">
           {experience.map((job, i) => (
             <Reveal key={job.company} delay={i * 0.08}>
-              <div className="group relative glass border-gradient rounded-3xl p-7 sm:p-9 overflow-hidden">
-                {/* ambient glow */}
-                <div
-                  className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full opacity-30 blur-3xl transition-opacity duration-700 group-hover:opacity-50"
-                  style={{ background: `var(--${job.accent})` }}
-                />
+              <Tilt max={3}>
+                <article className="group relative overflow-hidden rounded-md border border-[var(--line-strong)] bg-gradient-to-br from-[#160909]/90 via-[#0b0606]/90 to-black/90 hud-corners">
+                  <div className="scan-sweep" />
+                  {/* ghosted period year */}
+                  <span
+                    aria-hidden
+                    className="pointer-events-none select-none absolute -right-6 -bottom-10 font-poster stroke-text text-[clamp(8rem,20vw,16rem)] leading-none opacity-30"
+                  >
+                    {job.period.match(/\d{4}/)?.[0]}
+                  </span>
+                  <div className="absolute -top-32 -left-32 h-72 w-72 rounded-full bg-[var(--red)]/20 blur-[90px]" />
 
-                <div className="relative grid gap-8 lg:grid-cols-[1fr_1.3fr]">
-                  {/* left: identity */}
-                  <div>
-                    <div className="flex items-start gap-4">
-                      <span
-                        className="shrink-0 grid place-items-center h-14 w-14 rounded-2xl border border-[var(--line-strong)]"
-                        style={{
-                          background: `color-mix(in oklab, var(--${job.accent}) 12%, transparent)`,
-                          color: `var(--${job.accent})`,
-                        }}
-                      >
-                        <Briefcase size={22} />
-                      </span>
-                      <div>
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                          <h3 className="font-display text-2xl font-semibold">{job.role}</h3>
-                          {job.current && (
-                            <span className="inline-flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full border border-[var(--aqua)]/40 text-[var(--aqua)]">
-                              <span className="h-1.5 w-1.5 rounded-full bg-[var(--aqua)] live-dot" />
-                              Current
-                            </span>
-                          )}
-                        </div>
-                        <p className="mt-1 text-[15px] text-[var(--ink)]/85">
-                          {job.company}
-                        </p>
-                        <p className="text-[13px] text-[var(--muted)]">{job.type}</p>
+                  <div className="relative grid lg:grid-cols-[1fr_1.25fr]">
+                    {/* identity column */}
+                    <div className="relative p-7 sm:p-10 lg:border-r border-[var(--line-strong)]">
+                      <div className="flex items-center gap-3 font-mono text-[10.5px] uppercase tracking-[0.3em] text-[var(--muted)]">
+                        <span className="text-[var(--red)]">FILE</span>
+                        <span className="h-px flex-1 bg-[var(--line-strong)]" />
+                        <span>{String(i + 1).padStart(3, "0")}</span>
                       </div>
-                    </div>
 
-                    <div className="mt-6 space-y-2.5 font-mono text-[12.5px] text-[var(--muted)]">
-                      <div className="flex items-center justify-between border-b border-[var(--line)] pb-2.5">
-                        <span>PERIOD</span>
-                        <span className="text-[var(--ink)]/80">
-                          {job.period}{" "}
-                          <span className="text-[var(--cyan)]">· {job.duration}</span>
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between border-b border-[var(--line)] pb-2.5">
-                        <span>MODE</span>
-                        <span className="text-[var(--ink)]/80">{job.mode}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>LOCATION</span>
-                        <span className="flex items-center gap-1.5 text-[var(--ink)]/80">
-                          <MapPin size={12} className="text-[var(--cyan)]" />
-                          {job.location}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                      <h3 className="mt-6 font-poster text-[clamp(3rem,7vw,5.4rem)] leading-[0.85] ember-fill">
+                        {job.role}
+                      </h3>
+                      <p className="mt-4 font-serif italic text-2xl sm:text-3xl text-[var(--ink)]">{job.company}</p>
+                      <p className="mt-1 font-mono text-[12px] uppercase tracking-[0.2em] text-[var(--muted)]">{job.type}</p>
 
-                  {/* right: substance */}
-                  <div className="lg:border-l lg:border-[var(--line)] lg:pl-8">
-                    <p className="text-[15px] sm:text-base text-[var(--ink)]/85 leading-relaxed">
-                      {job.summary}
-                    </p>
-
-                    <ul className="mt-5 space-y-3">
-                      {job.highlights.map((h, hi) => (
-                        <motion.li
-                          key={hi}
-                          initial={{ opacity: 0, x: 12 }}
-                          whileInView={{ opacity: 1, x: 0 }}
+                      {job.current && (
+                        <motion.span
+                          initial={{ scale: 2.4, opacity: 0, rotate: -24 }}
+                          whileInView={{ scale: 1, opacity: 1, rotate: -9 }}
                           viewport={{ once: true }}
-                          transition={{ delay: 0.1 + hi * 0.08 }}
-                          className="flex gap-3 text-[14px] text-[var(--muted)] leading-relaxed"
+                          transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1], delay: 0.4 }}
+                          className="absolute top-[5.2rem] right-7 sm:right-10 inline-flex items-center gap-2 border-2 border-[var(--red)] px-3 py-1 font-poster text-xl tracking-[0.12em] text-[var(--red)]"
                         >
-                          <CheckCircle2
-                            size={16}
-                            className="shrink-0 mt-0.5"
-                            style={{ color: `var(--${job.accent})` }}
-                          />
-                          <span>{h}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
+                          <span className="h-2 w-2 rounded-full bg-[var(--red)] rec-dot" />
+                          Current
+                        </motion.span>
+                      )}
 
-                    <div className="mt-6 flex flex-wrap gap-2">
-                      {job.stack.map((t) => (
-                        <span
-                          key={t}
-                          className="text-[12px] font-mono px-3 py-1.5 rounded-lg bg-white/[0.03] border border-[var(--line)] text-[var(--muted)]"
-                        >
-                          {t}
-                        </span>
-                      ))}
+                      <dl className="mt-9 font-mono text-[12px]">
+                        <div className="flex items-center justify-between gap-4 py-3 border-b border-[var(--line)]">
+                          <dt className="text-[var(--muted)] tracking-[0.2em]">PERIOD</dt>
+                          <dd className="text-[var(--ink)]/85 text-right">
+                            {job.period} <span className="text-[var(--red)]">· {job.duration}</span>
+                          </dd>
+                        </div>
+                        <div className="flex items-center justify-between gap-4 py-3 border-b border-[var(--line)]">
+                          <dt className="text-[var(--muted)] tracking-[0.2em]">MODE</dt>
+                          <dd className="text-[var(--ink)]/85 text-right">{job.mode}</dd>
+                        </div>
+                        <div className="flex items-center justify-between gap-4 py-3 border-b border-[var(--line)]">
+                          <dt className="text-[var(--muted)] tracking-[0.2em]">LOCATION</dt>
+                          <dd className="text-[var(--ink)]/85 text-right inline-flex items-center gap-1.5">
+                            <MapPin size={12} className="text-[var(--red)] shrink-0" />
+                            {job.location}
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
+
+                    {/* intel column */}
+                    <div className="relative p-7 sm:p-10">
+                      <p className="font-serif text-[1.45rem] sm:text-[1.75rem] leading-snug text-[var(--ink)]/90">
+                        {job.summary}
+                      </p>
+
+                      <ol className="mt-8 border-t border-[var(--line)]">
+                        {job.highlights.map((h, hi) => (
+                          <motion.li
+                            key={hi}
+                            initial={{ opacity: 0, x: 24 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.8, ease, delay: 0.15 + hi * 0.12 }}
+                            className="relative flex gap-5 py-5 border-b border-[var(--line)] text-[14.5px] text-[var(--muted)] leading-relaxed"
+                          >
+                            <span className="font-poster text-2xl text-[var(--red)] leading-none pt-0.5 w-8 shrink-0">
+                              {String(hi + 1).padStart(2, "0")}
+                            </span>
+                            <span>{h}</span>
+                          </motion.li>
+                        ))}
+                      </ol>
+
+                      <div className="mt-7 flex flex-wrap gap-2">
+                        {job.stack.map((t) => (
+                          <span
+                            key={t}
+                            className="font-mono text-[11px] uppercase tracking-[0.14em] px-3 py-1.5 border border-[var(--red)]/35 text-[var(--ink)]/80 bg-[var(--red)]/[0.06]"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <ArrowUpRight
-                  size={20}
-                  className="absolute top-7 right-7 text-[var(--muted)]/40 group-hover:text-[var(--cyan)] group-hover:rotate-45 transition-all duration-500"
-                />
-              </div>
+                </article>
+              </Tilt>
             </Reveal>
           ))}
         </div>

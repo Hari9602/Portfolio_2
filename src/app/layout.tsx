@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono, Anton, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { profile } from "@/lib/data";
 
@@ -20,6 +20,23 @@ const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+// cinematic poster type (giant condensed name / titles)
+const poster = Anton({
+  subsets: ["latin"],
+  variable: "--font-poster",
+  weight: "400",
+  display: "swap",
+});
+
+// editorial serif for section titles
+const serif = Instrument_Serif({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  weight: "400",
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -62,7 +79,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#04060f",
+  themeColor: "#070404",
   width: "device-width",
   initialScale: 1,
 };
@@ -73,7 +90,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+      className={`${display.variable} ${sans.variable} ${mono.variable} ${poster.variable} ${serif.variable}`}
       suppressHydrationWarning
     >
       <body suppressHydrationWarning>{children}</body>

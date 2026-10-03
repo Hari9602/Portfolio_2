@@ -24,6 +24,7 @@ export default function Home() {
     <SmoothScroll>
       <Preloader />
       <ShaderBackgroundMount />
+      <div className="light-leak" />
       <div className="grain" />
       <div className="noise-vignette" />
       <Cursor />

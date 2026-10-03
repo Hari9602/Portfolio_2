@@ -139,12 +139,13 @@ export default function AboutTerminal() {
 
   return (
     <div ref={ref} className="w-full">
-      <div className="glass border-gradient rounded-2xl overflow-hidden shadow-[0_30px_80px_-40px_rgba(52,231,255,0.45)]">
+      <div className="relative glass hud-corners border-gradient rounded-md overflow-hidden bg-black/40 shadow-[0_40px_100px_-40px_rgba(255,45,45,0.55)]">
+        <div className="scan-sweep" />
         {/* title bar */}
-        <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--line)] bg-white/[0.02]">
-          <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-          <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-          <span className="h-3 w-3 rounded-full bg-[#28c840]" />
+        <div className="flex items-center gap-2 px-4 py-3 border-b border-[var(--line)] bg-[var(--red)]/[0.05]">
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--red)] shadow-[0_0_8px_var(--red)]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--ember)]/60" />
+          <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
           <span className="ml-3 font-mono text-[11px] text-[var(--muted)]">
             operator@phantom — ~/about
           </span>

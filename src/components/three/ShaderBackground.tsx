@@ -44,23 +44,23 @@ void main(){
   float md = length(p - m);
   f += 0.18*exp(-md*3.0)*sin(md*10.0 - uTime*1.5);
 
-  // palette: void -> deep blue -> violet -> cyan filaments
-  vec3 void_ = vec3(0.015, 0.024, 0.059);
-  vec3 blue  = vec3(0.055, 0.11, 0.30);
-  vec3 viol  = vec3(0.31, 0.18, 0.55);
-  vec3 cyan  = vec3(0.20, 0.83, 1.0);
+  // palette: void -> dried blood -> crimson smoke -> ember filaments
+  vec3 void_  = vec3(0.022, 0.012, 0.012);
+  vec3 maroon = vec3(0.10, 0.018, 0.016);
+  vec3 crim   = vec3(0.30, 0.035, 0.03);
+  vec3 ember  = vec3(1.0, 0.36, 0.10);
 
   vec3 col = void_;
-  col = mix(col, blue, smoothstep(0.25,0.65,f));
-  col = mix(col, viol, smoothstep(0.55,0.85,f)*0.7);
-  // thin cyan filaments on ridges
-  float ridge = smoothstep(0.72,0.80,f) * (1.0-smoothstep(0.80,0.9,f));
-  col += cyan*ridge*0.6;
+  col = mix(col, maroon, smoothstep(0.3,0.7,f));
+  col = mix(col, crim, smoothstep(0.6,0.9,f)*0.55);
+  // thin ember filaments on smoke ridges
+  float ridge = smoothstep(0.74,0.81,f) * (1.0-smoothstep(0.81,0.9,f));
+  col += ember*ridge*0.22;
 
   // vignette + keep it dark for legibility
   float vig = smoothstep(1.2,0.2,length((uv-0.5)*asp));
-  col *= 0.35 + 0.65*vig;
-  col *= 0.9;
+  col *= 0.3 + 0.7*vig;
+  col *= 0.85;
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -121,7 +121,7 @@ export default function ShaderBackground() {
     <div className="fixed inset-0 -z-10 pointer-events-none">
       <Canvas
         gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}
-        dpr={[1, 1.5]}
+        dpr={[0.75, 1]}
         camera={{ position: [0, 0, 1] }}
         frameloop="always"
       >

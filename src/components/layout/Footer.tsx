@@ -72,7 +72,14 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-[var(--line)] flex flex-col sm:flex-row justify-between gap-3 text-xs text-[var(--muted)]/70 font-mono">
+        <div
+          aria-hidden
+          className="mt-16 select-none font-poster ember-fill text-center leading-[0.8] text-[clamp(2.6rem,12vw,13rem)] whitespace-nowrap"
+        >
+          {profile.name}
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-[var(--line)] flex flex-col sm:flex-row justify-between gap-3 text-xs text-[var(--muted)]/70 font-mono">
           <span>© {new Date().getFullYear()} {profile.name}. All systems secured.</span>
           <span>Designed & engineered with an adversarial eye.</span>
         </div>

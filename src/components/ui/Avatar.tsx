@@ -14,7 +14,7 @@ export default function Avatar({ size = 34 }: { size?: number }) {
       style={{
         width: size + 4,
         height: size + 4,
-        background: "conic-gradient(from 180deg, #34e7ff, #4d7cff, #8b5cf6, #ff2e9a, #34e7ff)",
+        background: "conic-gradient(from 180deg, #ff2d2d, #ff6b2c, #ffb648, #e0263f, #ff2d2d)",
       }}
     >
       <span

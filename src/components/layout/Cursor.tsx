@@ -25,7 +25,8 @@ export default function Cursor() {
       ringPos.x += (pos.x - ringPos.x) * 0.18;
       ringPos.y += (pos.y - ringPos.y) * 0.18;
       if (ring.current) {
-        ring.current.style.transform = `translate(${ringPos.x - 17}px, ${ringPos.y - 17}px)`;
+        const half = ring.current.offsetWidth / 2;
+        ring.current.style.transform = `translate(${ringPos.x - half}px, ${ringPos.y - half}px)`;
       }
       raf = requestAnimationFrame(loop);
     };
@@ -49,7 +50,12 @@ export default function Cursor() {
   return (
     <>
       <div ref={dot} className="cursor-dot" />
-      <div ref={ring} className="cursor-ring" />
+      <div ref={ring} className="cursor-ring">
+        <i />
+        <i />
+        <i />
+        <i />
+      </div>
     </>
   );
 }

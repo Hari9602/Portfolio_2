@@ -1,91 +1,131 @@
 "use client";
 
-import { useRef } from "react";
-import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowUpRight, Crosshair, Network, Fingerprint, Radar, Bug, Server } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { Stagger, itemVariants } from "@/components/ui/Reveal";
-import Tilt from "@/components/ui/Tilt";
 import { expertise } from "@/lib/data";
 
-function Card({ item, idx }: { item: (typeof expertise)[number]; idx: number }) {
-  const ref = useRef<HTMLDivElement>(null);
+gsap.registerPlugin(ScrollTrigger);
 
-  function onMove(e: React.MouseEvent) {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    el.style.setProperty("--my", `${e.clientY - r.top}px`);
-  }
+/* procedural "key art" per domain — no images, all gradients + geometry */
+const ART = [
+  "radial-gradient(circle at 70% 30%, rgba(255,45,45,0.55), transparent 45%), radial-gradient(circle at 20% 80%, rgba(255,107,44,0.3), transparent 50%)",
+  "radial-gradient(circle at 30% 25%, rgba(255,107,44,0.5), transparent 45%), conic-gradient(from 210deg at 70% 70%, transparent, rgba(255,45,45,0.35), transparent 30%)",
+  "radial-gradient(ellipse at 50% 100%, rgba(224,38,63,0.6), transparent 55%), radial-gradient(circle at 80% 20%, rgba(255,182,72,0.2), transparent 40%)",
+  "conic-gradient(from 90deg at 50% 45%, transparent, rgba(255,45,45,0.45), transparent 25%, rgba(255,107,44,0.25), transparent 55%)",
+  "radial-gradient(circle at 25% 35%, rgba(255,61,110,0.45), transparent 45%), radial-gradient(circle at 75% 75%, rgba(255,45,45,0.35), transparent 45%)",
+  "radial-gradient(circle at 60% 40%, rgba(255,182,72,0.35), transparent 40%), radial-gradient(ellipse at 20% 100%, rgba(255,45,45,0.5), transparent 55%)",
+];
 
+const GLYPHS = [Crosshair, Network, Fingerprint, Radar, Bug, Server];
+
+function Panel({ item, idx }: { item: (typeof expertise)[number]; idx: number }) {
+  const Glyph = GLYPHS[idx % GLYPHS.length];
   return (
-    <motion.div variants={itemVariants} className="h-full">
-      <Tilt className="h-full">
-      <div
-        ref={ref}
-        onMouseMove={onMove}
-        data-cursor
-        className="group relative h-full glass glass-hover rounded-2xl p-6 overflow-hidden"
-      >
-        {/* spotlight */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{
-            background:
-              "radial-gradient(340px circle at var(--mx) var(--my), rgba(52,231,255,0.1), transparent 70%)",
-          }}
-        />
-        <div className="relative">
-          <div className="flex items-start justify-between">
-            <span
-              className="font-mono text-xs px-2.5 py-1 rounded-md border"
-              style={{
-                color: `var(--${item.accent})`,
-                borderColor: `color-mix(in oklab, var(--${item.accent}) 35%, transparent)`,
-                background: `color-mix(in oklab, var(--${item.accent}) 8%, transparent)`,
-              }}
-            >
-              {String(idx + 1).padStart(2, "0")}
-            </span>
-            <ArrowUpRight
-              size={18}
-              className="text-[var(--muted)] group-hover:text-[var(--cyan)] group-hover:rotate-45 transition-all duration-400"
-            />
-          </div>
-
-          <h3 className="mt-5 font-display text-lg font-semibold leading-snug">
-            {item.title}
-          </h3>
-          <p className="mt-2.5 text-[13.5px] text-[var(--muted)] leading-relaxed">
-            {item.blurb}
-          </p>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            {item.capabilities.map((c) => (
-              <span
-                key={c}
-                className="text-[11.5px] font-mono px-2.5 py-1 rounded-md bg-white/[0.03] border border-[var(--line)] text-[var(--muted)]"
-              >
-                {c}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div
-          className="absolute -bottom-px left-6 right-6 h-px scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500"
-          style={{ background: `var(--${item.accent})` }}
+    <article
+      data-cursor
+      className="xp-card group relative shrink-0 w-full lg:w-[min(36vw,520px)] lg:h-[min(70vh,640px)] overflow-hidden rounded-md border border-[var(--line-strong)] bg-[#0b0606] preserve-3d"
+    >
+      {/* key art */}
+      <div className="absolute inset-0 transition-transform duration-[1.2s] ease-[cubic-bezier(.16,1,.3,1)] group-hover:scale-110" style={{ background: ART[idx % ART.length] }} />
+      <div className="absolute inset-0 grid-bg" />
+      <div className="absolute right-[-14%] top-[-10%] h-[66%] aspect-square rounded-full border border-[var(--red)]/40 spin-slow">
+        <span className="absolute left-1/2 -top-1 h-2 w-2 -translate-x-1/2 rounded-full bg-[var(--red)] shadow-[0_0_12px_var(--red)]" />
+      </div>
+      <div className="absolute right-[0%] top-[4%] h-[42%] aspect-square rounded-full border border-dashed border-[var(--ember)]/45 spin-slow-rev" />
+      <div className="absolute right-[10%] top-[13%] h-[24%] aspect-square grid place-items-center">
+        <Glyph
+          strokeWidth={1}
+          className="h-full w-full text-[var(--red)] drop-shadow-[0_0_18px_rgba(255,45,45,0.85)] transition-transform duration-700 group-hover:scale-110 group-hover:rotate-6"
         />
       </div>
-      </Tilt>
-    </motion.div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+      <span className="absolute -left-2 top-4 font-poster stroke-text text-[9rem] leading-none opacity-70">
+        {String(idx + 1).padStart(2, "0")}
+      </span>
+
+      <div className="relative h-full flex flex-col justify-end p-7 sm:p-9 pt-40">
+        <div className="flex items-center justify-between font-mono text-[10.5px] uppercase tracking-[0.3em] text-[var(--muted)]">
+          <span>
+            <span className="text-[var(--red)]">{String(idx + 1).padStart(2, "0")}</span> / {String(expertise.length).padStart(2, "0")}
+          </span>
+          <ArrowUpRight size={18} className="text-[var(--red)] transition-transform duration-500 group-hover:rotate-45" />
+        </div>
+        <h3 className="mt-4 font-serif text-[2rem] sm:text-[2.4rem] leading-[1.02] text-[var(--ink)]">{item.title}</h3>
+        <p className="mt-4 text-[14px] text-[var(--muted)] leading-relaxed">{item.blurb}</p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {item.capabilities.map((c) => (
+            <span
+              key={c}
+              className="font-mono text-[10.5px] uppercase tracking-[0.12em] px-2.5 py-1 border border-[var(--red)]/30 bg-black/50 text-[var(--ink)]/80"
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+        <span className="absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 bg-gradient-to-r from-[var(--red)] to-[var(--ember)] transition-transform duration-700 group-hover:scale-x-100" />
+      </div>
+    </article>
   );
 }
 
 export default function Expertise() {
+  const pinRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+      const pin = pinRef.current;
+      const track = trackRef.current;
+      if (!pin || !track) return;
+      const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
+
+      const tween = gsap.to(track, {
+        x: () => -dist(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: pin,
+          start: "top top",
+          end: () => `+=${dist()}`,
+          pin: true,
+          scrub: 1,
+          invalidateOnRefresh: true,
+          anticipatePin: 1,
+          onUpdate: (st) => {
+            if (barRef.current) barRef.current.style.transform = `scaleX(${st.progress})`;
+          },
+        },
+      });
+
+      // cover-flow: each panel swings through the frame as it passes centre
+      gsap.utils.toArray<HTMLElement>(".xp-card", track).forEach((card) => {
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: card,
+              containerAnimation: tween,
+              start: "left right",
+              end: "right left",
+              scrub: true,
+            },
+          })
+          .fromTo(
+            card,
+            { rotateY: -32, scale: 0.86, opacity: 0.45 },
+            { rotateY: 0, scale: 1, opacity: 1, ease: "none" }
+          )
+          .to(card, { rotateY: 32, scale: 0.86, opacity: 0.45, ease: "none" });
+      });
+    });
+    return () => mm.revert();
+  }, []);
+
   return (
-    <section id="expertise" className="section">
+    <section id="expertise" className="relative pt-[clamp(6rem,12vw,11rem)]">
       <div className="container-x">
         <SectionHeading
           index="03"
@@ -93,12 +133,28 @@ export default function Expertise() {
           title="Full-spectrum security expertise"
           subtitle="Six core domains spanning offense, defense, and the infrastructure in between — each backed by hands-on practice and industry certification."
         />
+      </div>
 
-        <Stagger className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div ref={pinRef} className="relative lg:h-screen lg:flex lg:items-center overflow-hidden mt-14 lg:mt-0 pb-[clamp(5rem,10vw,8rem)] lg:pb-0">
+        <div
+          ref={trackRef}
+          className="stage-3d flex flex-col lg:flex-row gap-6 lg:gap-10 px-[clamp(1rem,5vw,3rem)] lg:pl-[10vw] lg:pr-[30vw] will-change-transform"
+        >
           {expertise.map((item, idx) => (
-            <Card key={item.id} item={item} idx={idx} />
+            <Panel key={item.id} item={item} idx={idx} />
           ))}
-        </Stagger>
+        </div>
+
+        {/* scrub progress */}
+        <div className="hidden lg:block absolute bottom-10 left-[10vw] right-[10vw]">
+          <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.3em] text-[var(--muted)] mb-3">
+            <span>Capabilities</span>
+            <span className="text-[var(--red)]">{String(expertise.length).padStart(2, "0")}</span>
+          </div>
+          <div className="h-px bg-[var(--line-strong)]">
+            <div ref={barRef} className="h-px origin-left scale-x-0 bg-gradient-to-r from-[var(--red)] to-[var(--ember)] shadow-[0_0_10px_var(--red)]" />
+          </div>
+        </div>
       </div>
     </section>
   );

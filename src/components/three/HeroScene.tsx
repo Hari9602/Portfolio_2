@@ -1,212 +1,114 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, MeshDistortMaterial, Icosahedron } from "@react-three/drei";
+import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import Embers from "./cine/Embers";
+import NeonRibbon from "./cine/NeonRibbon";
+import { useCanvasActive } from "./cine/useCanvasActive";
 
-/* A network sphere: nodes on a fibonacci sphere + proximity edges.
-   Reads like an attack-surface graph / threat map. */
+/* Cinematic hero stage: a volumetric red spotlight falling on the operator,
+   rising embers, and two light-trail ribbons sweeping behind the figure.
+   The portrait itself is a DOM layer composited above this canvas. */
 
-function fibonacciSphere(count: number, radius: number) {
-  const pts: THREE.Vector3[] = [];
-  const phi = Math.PI * (3 - Math.sqrt(5));
-  for (let i = 0; i < count; i++) {
-    const y = 1 - (i / (count - 1)) * 2;
-    const r = Math.sqrt(1 - y * y);
-    const theta = phi * i;
-    pts.push(
-      new THREE.Vector3(Math.cos(theta) * r, y, Math.sin(theta) * r).multiplyScalar(radius)
-    );
-  }
-  return pts;
+const coneVert = /* glsl */ `
+varying vec2 vUv;
+varying vec3 vNormalV;
+varying vec3 vViewDir;
+void main() {
+  vUv = uv;
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vNormalV = normalize(normalMatrix * normal);
+  vViewDir = normalize(-mv.xyz);
+  gl_Position = projectionMatrix * mv;
 }
+`;
 
-function NetworkSphere() {
-  const group = useRef<THREE.Group>(null);
-  const { pointer } = useThree();
-
-  const { nodeGeo, edgeGeo, glowGeo } = useMemo(() => {
-    const NODES = 140;
-    const RADIUS = 2.4;
-    const pts = fibonacciSphere(NODES, RADIUS);
-
-    const nodePos = new Float32Array(NODES * 3);
-    pts.forEach((p, i) => {
-      nodePos[i * 3] = p.x;
-      nodePos[i * 3 + 1] = p.y;
-      nodePos[i * 3 + 2] = p.z;
-    });
-    const nodeGeo = new THREE.BufferGeometry();
-    nodeGeo.setAttribute("position", new THREE.BufferAttribute(nodePos, 3));
-
-    // edges between near neighbours
-    const edges: number[] = [];
-    const maxDist = RADIUS * 0.62;
-    for (let i = 0; i < pts.length; i++) {
-      for (let j = i + 1; j < pts.length; j++) {
-        if (pts[i].distanceTo(pts[j]) < maxDist) {
-          edges.push(pts[i].x, pts[i].y, pts[i].z, pts[j].x, pts[j].y, pts[j].z);
-        }
-      }
-    }
-    const edgeGeo = new THREE.BufferGeometry();
-    edgeGeo.setAttribute(
-      "position",
-      new THREE.BufferAttribute(new Float32Array(edges), 3)
-    );
-
-    // a few bright "active" nodes
-    const glow = pts.filter((_, i) => i % 11 === 0);
-    const glowPos = new Float32Array(glow.length * 3);
-    glow.forEach((p, i) => {
-      glowPos[i * 3] = p.x;
-      glowPos[i * 3 + 1] = p.y;
-      glowPos[i * 3 + 2] = p.z;
-    });
-    const glowGeo = new THREE.BufferGeometry();
-    glowGeo.setAttribute("position", new THREE.BufferAttribute(glowPos, 3));
-
-    return { nodeGeo, edgeGeo, glowGeo };
-  }, []);
-
-  useFrame((state, delta) => {
-    if (!group.current) return;
-    group.current.rotation.y += delta * 0.06;
-    // gentle parallax toward pointer
-    const tx = pointer.y * 0.25;
-    const ty = pointer.x * 0.35;
-    group.current.rotation.x += (tx - group.current.rotation.x) * 0.04;
-    group.current.position.x += (ty * 0.4 - group.current.position.x) * 0.04;
-    const pulse = 1 + Math.sin(state.clock.elapsedTime * 1.6) * 0.04;
-    group.current.scale.setScalar(pulse);
-  });
-
-  return (
-    <group ref={group}>
-      <lineSegments geometry={edgeGeo}>
-        <lineBasicMaterial
-          color="#4d7cff"
-          transparent
-          opacity={0.18}
-          blending={THREE.AdditiveBlending}
-        />
-      </lineSegments>
-      <points geometry={nodeGeo}>
-        <pointsMaterial
-          color="#9fb6ff"
-          size={0.045}
-          sizeAttenuation
-          transparent
-          opacity={0.9}
-          blending={THREE.AdditiveBlending}
-        />
-      </points>
-      <points geometry={glowGeo}>
-        <pointsMaterial
-          color="#34e7ff"
-          size={0.14}
-          sizeAttenuation
-          transparent
-          opacity={1}
-          blending={THREE.AdditiveBlending}
-        />
-      </points>
-    </group>
-  );
+const coneFrag = /* glsl */ `
+uniform float uTime;
+varying vec2 vUv;
+varying vec3 vNormalV;
+varying vec3 vViewDir;
+void main() {
+  // brightest at the source (top), fading toward the floor
+  float along = smoothstep(0.0, 1.0, vUv.y);
+  // soft edges: facing-ratio falloff reads as a volumetric beam
+  float facing = abs(dot(vNormalV, vViewDir));
+  float body = pow(facing, 2.2);
+  float dust = 0.85 + 0.15 * sin(vUv.y * 40.0 - uTime * 1.5 + vUv.x * 12.0);
+  float a = body * along * 0.16 * dust;
+  gl_FragColor = vec4(vec3(1.0, 0.22, 0.12) * 1.4, a);
 }
+`;
 
-function Particles() {
-  const ref = useRef<THREE.Points>(null);
-  const geo = useMemo(() => {
-    const N = 400;
-    const pos = new Float32Array(N * 3);
-    for (let i = 0; i < N; i++) {
-      const r = 4 + Math.random() * 4;
-      const t = Math.random() * Math.PI * 2;
-      const p = Math.acos(2 * Math.random() - 1);
-      pos[i * 3] = r * Math.sin(p) * Math.cos(t);
-      pos[i * 3 + 1] = r * Math.sin(p) * Math.sin(t);
-      pos[i * 3 + 2] = r * Math.cos(p);
-    }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-    return g;
-  }, []);
-
-  useFrame((_, delta) => {
-    if (ref.current) ref.current.rotation.y -= delta * 0.015;
+function SpotCone() {
+  const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
+  const mat = useRef<THREE.ShaderMaterial>(null);
+  useFrame((_, d) => {
+    if (mat.current) mat.current.uniforms.uTime.value += d;
   });
-
   return (
-    <points ref={ref} geometry={geo}>
-      <pointsMaterial
-        color="#8b5cf6"
-        size={0.03}
+    <mesh position={[0, 1.6, -2.2]}>
+      <coneGeometry args={[3.4, 8, 64, 1, true]} />
+      <shaderMaterial
+        ref={mat}
+        vertexShader={coneVert}
+        fragmentShader={coneFrag}
+        uniforms={uniforms}
         transparent
-        opacity={0.5}
+        depthWrite={false}
         blending={THREE.AdditiveBlending}
+        side={THREE.DoubleSide}
       />
-    </points>
+    </mesh>
   );
 }
 
-function DistortCore() {
-  const { pointer } = useThree();
-  const grp = useRef<THREE.Group>(null);
-  useFrame((_, delta) => {
-    if (!grp.current) return;
-    grp.current.rotation.y += delta * 0.15;
-    grp.current.rotation.x += (pointer.y * 0.3 - grp.current.rotation.x) * 0.03;
+// sweeping S-curve behind the figure + a tilted orbit loop
+const SWEEP: [number, number, number][] = [
+  [-8, -3.2, -2],
+  [-4.5, -0.6, -0.5],
+  [-1.6, 1.6, -2.6],
+  [1.2, 0.2, -3],
+  [3.6, -1.8, -1],
+  [6, -0.2, -2.2],
+  [9, 1.8, -3],
+];
+
+const LOOP: [number, number, number][] = Array.from({ length: 14 }, (_, i) => {
+  const t = (i / 14) * Math.PI * 2;
+  return [Math.cos(t) * 3.4, Math.sin(t) * 0.7 - 0.6 + Math.cos(t) * 0.5, Math.sin(t) * 1.6 - 1.8];
+});
+
+function Rig({ children }: { children: React.ReactNode }) {
+  const g = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (!g.current) return;
+    const { x, y } = state.pointer;
+    g.current.rotation.y += (x * 0.18 - g.current.rotation.y) * 0.04;
+    g.current.rotation.x += (-y * 0.08 - g.current.rotation.x) * 0.04;
   });
-  return (
-    <Float speed={1.4} rotationIntensity={0.5} floatIntensity={0.7}>
-      <group ref={grp}>
-        {/* glowing distorted glass core */}
-        <Icosahedron args={[1.05, 6]}>
-          <MeshDistortMaterial
-            color="#4d7cff"
-            emissive="#1b2f7a"
-            emissiveIntensity={0.5}
-            roughness={0.15}
-            metalness={0.9}
-            distort={0.42}
-            speed={1.6}
-            transparent
-            opacity={0.92}
-          />
-        </Icosahedron>
-        {/* wireframe shell */}
-        <Icosahedron args={[1.35, 2]}>
-          <meshBasicMaterial
-            color="#34e7ff"
-            wireframe
-            transparent
-            opacity={0.14}
-            blending={THREE.AdditiveBlending}
-          />
-        </Icosahedron>
-      </group>
-    </Float>
-  );
+  return <group ref={g}>{children}</group>;
 }
 
-export default function HeroScene() {
+export default function HeroScene({ mobile = false }: { mobile?: boolean }) {
+  const { ref, frameloop } = useCanvasActive<HTMLDivElement>();
   return (
-    <Canvas
-      camera={{ position: [0, 0, 7], fov: 45 }}
-      dpr={[1, 1.8]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-      style={{ background: "transparent" }}
-    >
-      <ambientLight intensity={0.6} />
-      <pointLight position={[4, 3, 5]} intensity={40} color="#34e7ff" />
-      <pointLight position={[-5, -2, 2]} intensity={30} color="#8b5cf6" />
-      <Float speed={0.8} rotationIntensity={0.2} floatIntensity={0.4}>
-        <NetworkSphere />
-      </Float>
-      <DistortCore />
-      <Particles />
-    </Canvas>
+    <div ref={ref} className="absolute inset-0">
+      <Canvas
+        frameloop={frameloop}
+        camera={{ position: [0, 0, 7], fov: 42 }}
+        dpr={[1, 1.6]}
+        gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+        style={{ background: "transparent" }}
+      >
+        <Rig>
+          <SpotCone />
+          <NeonRibbon points={SWEEP} speed={0.09} thickness={0.026} />
+          <NeonRibbon points={LOOP} closed speed={0.14} offset={0.5} thickness={0.016} color="#ff5a1f" />
+          <Embers count={mobile ? 260 : 620} />
+        </Rig>
+      </Canvas>
+    </div>
   );
 }
