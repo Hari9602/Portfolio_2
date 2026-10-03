@@ -399,7 +399,7 @@ export const timeline = [
     accent: "violet",
   },
   {
-    period: "2022 – Present",
+    period: "2022 – 2026",
     title: "B.Tech, Computer Science & Engineering",
     org: "Lovely Professional University",
     desc: "Building the formal CS foundation while competing in CTFs and climbing to the top 1% on TryHackMe.",
